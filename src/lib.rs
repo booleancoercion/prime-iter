@@ -47,6 +47,7 @@ where
 }
 
 /// The iterator type returned by [primes].
+#[derive(Clone, Debug)]
 pub struct Primes<T> {
     primes: Vec<T>,
     multiples: Vec<T>,
