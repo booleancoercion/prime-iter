@@ -50,7 +50,6 @@ where
 pub struct Primes<T> {
     primes: Vec<T>,
     multiples: Vec<T>,
-    overflowed: Vec<bool>,
     current: T,
     done: bool,
 }
@@ -62,7 +61,6 @@ macro_rules! impl_primes {
                 Self {
                     primes: Default::default(),
                     multiples: Default::default(),
-                    overflowed: Default::default(),
                     current: 2,
                     done: false,
                 }
@@ -85,14 +83,14 @@ macro_rules! impl_primes {
                     let mut is_prime = true;
 
                     'primeloop: for (i, &prime) in self.primes.iter().enumerate() {
-                        if self.overflowed[i] {
+                        if self.multiples[i] == 0 {
                             continue;
                         }
                         while self.multiples[i] < self.current {
                             match self.multiples[i].checked_add(prime) {
                                 Some(x) => self.multiples[i] = x,
                                 None => {
-                                    self.overflowed[i] = true;
+                                    self.multiples[i] = 0;
                                     continue 'primeloop;
                                 }
                             }
@@ -110,7 +108,6 @@ macro_rules! impl_primes {
                         if let Some(res) = self.current.checked_mul(self.current) {
                             self.primes.push(self.current);
                             self.multiples.push(res);
-                            self.overflowed.push(false);
                         }
                     }
 
